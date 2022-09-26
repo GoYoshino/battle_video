@@ -1,0 +1,16 @@
+from enum import Enum
+
+class EventEnum(Enum):
+
+    NOT_AN_EVENT = 0
+
+    ALLY_POKEMON_SENT = 1
+    ALLY_POKEMON_RETURNED = 2
+    OPPONENT_POKEMON_SENT = 3
+    OPPONENT_POKEMON_RETURNED = 3
+
+    MOVE_USED = 10
+
+    ABILITY_TRIGGERED = 20
+
+    ITEM_TRIGGERED = 30
