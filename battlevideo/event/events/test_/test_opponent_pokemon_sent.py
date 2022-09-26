@@ -12,6 +12,7 @@ class OpponentPokemonSentMatcherTest(TestCase):
         self.assertTrue(matches)
         self.assertEqual(line_consumed, 2)
         self.assertEqual("ザシアン", event.pokemon)
+        self.assertEqual("グリーンは\nザシアンを くりだした!", event.message)
 
     def test_other_message_does_not_match(self):
         matches, line_consumed, event = matcher.matches("ウオノラゴンは\nゴツゴツメットで ダメージを受けた!", Locale.JA)
@@ -22,3 +23,4 @@ class OpponentPokemonSentMatcherTest(TestCase):
         self.assertTrue(matches)
         self.assertEqual(line_consumed, 2)
         self.assertEqual("ザシアン", event.pokemon)
+        self.assertEqual("グリーンは\nランクマスター ザシアンを くりだした!", event.message)

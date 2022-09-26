@@ -12,6 +12,7 @@ class AllyPokemonSentMatcherTest(TestCase):
         self.assertTrue(matches)
         self.assertEqual(line_consumed, 1)
         self.assertEqual("ウオノラゴン", event.pokemon)
+        self.assertEqual("ゆけっ! ウオノラゴン!", event.message)
 
     def test_other_message_does_not_match(self):
         matches, line_consumed, event = matcher.matches("ウオノラゴンは\nゴツゴツメットで ダメージを受けた!", Locale.JA)
@@ -22,27 +23,32 @@ class AllyPokemonSentMatcherTest(TestCase):
         self.assertTrue(matches)
         self.assertEqual(line_consumed, 1)
         self.assertEqual("ウオノラゴン", event.pokemon)
+        self.assertEqual("任せた! ウオノラゴン!", event.message)
 
     def test_yowatteiru_matches(self):
         matches, line_consumed, event = matcher.matches("相手が 弱っている!\nチャンスだ! ウオノラゴン!", Locale.JA)
         self.assertTrue(matches)
         self.assertEqual(line_consumed, 2)
         self.assertEqual("ウオノラゴン", event.pokemon)
+        self.assertEqual("相手が 弱っている!\nチャンスだ! ウオノラゴン!", event.message)
 
     def test_works_with_titled_pokemon_yuke(self):
         matches, line_consumed, event = matcher.matches("ゆけっ! ガラルチャンピオン ウオノラゴン!", Locale.JA)
         self.assertTrue(matches)
         self.assertEqual(line_consumed, 1)
         self.assertEqual("ウオノラゴン", event.pokemon)
+        self.assertEqual("ゆけっ! ガラルチャンピオン ウオノラゴン!", event.message)
 
     def test_works_with_titled_pokemon_makaseta(self):
         matches, line_consumed, event = matcher.matches("任せた! ガラルチャンピオン ウオノラゴン!", Locale.JA)
         self.assertTrue(matches)
         self.assertEqual(line_consumed, 1)
         self.assertEqual("ウオノラゴン", event.pokemon)
+        self.assertEqual("任せた! ガラルチャンピオン ウオノラゴン!", event.message)
 
     def test_works_with_titled_pokemon_yowatteiru(self):
         matches, line_consumed, event = matcher.matches("相手が 弱っている!\nチャンスだ! ガラルチャンピオン ウオノラゴン!", Locale.JA)
         self.assertTrue(matches)
         self.assertEqual(line_consumed, 2)
         self.assertEqual("ウオノラゴン", event.pokemon)
+        self.assertEqual("相手が 弱っている!\nチャンスだ! ガラルチャンピオン ウオノラゴン!", event.message)
