@@ -3,6 +3,7 @@ import re
 
 from battlevideo.event.events.event import Event
 from battlevideo.event.events.event_matcher import EventMatcher
+from battlevideo.event.events.utils import split_subject
 from battlevideo.event.locale import Locale
 
 
@@ -31,13 +32,7 @@ class MoveUsedMatcher(EventMatcher):
         return False, None, None
 
     def __construct_event(self, match: re.Match, message: str) -> MoveUsedEvent:
-        pokemon_texts = match.group(1).split(" ")
-        if len(pokemon_texts) == 2:
-            pokemon = pokemon_texts[1]
-            is_opponent = True
-        else:
-            pokemon = pokemon_texts[0]
-            is_opponent = False
+        pokemon, is_opponent = split_subject(match.group(1))
         move = match.group(2)
 
         return MoveUsedEvent(message, pokemon, is_opponent, move)
