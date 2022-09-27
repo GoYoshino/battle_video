@@ -51,3 +51,6 @@ class ImageChunk:
         buffer = BytesIO()
         out_image_pil.save(buffer, format="PNG")
         return buffer.getvalue()
+
+    def image_height(self) -> int:
+        return self.__images[0].shape[0]
