@@ -29,11 +29,19 @@ im1_plus_im2 = np.array([
 
 class ImageChunkTest(TestCase):
 
-    def test_append_works(self):
+    def test_concat_works(self):
         chunk = ImageChunk()
         chunk.append(im1)
         chunk.append(im2)
-        result = chunk.to_png()
+        result = chunk.get_concatted()
+
+        self.assertTrue(np.array_equal(im1_plus_im2, result))
+
+    def test_to_png_works(self):
+        chunk = ImageChunk()
+        chunk.append(im1)
+        chunk.append(im2)
+        result = chunk.to_concatted_png_buffer()
 
         buffer = BytesIO(result)
         constructed_array = np.array(Image.open(buffer))
