@@ -18,18 +18,18 @@ class MoveUsedEvent(Event):
 
 class MoveUsedMatcher(EventMatcher):
 
-    def matches(self, text: str, locale: Locale) -> Tuple[bool, Union[int, None], Union[MoveUsedEvent, None]]:
+    def matches(self, text: str, locale: Locale) -> Tuple[bool, Union[MoveUsedEvent, None]]:
         match = re.search("(.+)の\n([^\s]+)!$", text)
         if match is not None:
             event = self.__construct_event(match, text)
-            return True, 2, event
+            return True, event
 
         match = re.search("(.+)は\n(.+)を\sつかった!$", text)
         if match is not None:
             event = self.__construct_event(match, text)
-            return True, 2, event
+            return True, event
 
-        return False, None, None
+        return False, None
 
     def __construct_event(self, match: re.Match, message: str) -> MoveUsedEvent:
         pokemon, is_opponent = split_subject(match.group(1))

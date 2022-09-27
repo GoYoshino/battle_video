@@ -8,19 +8,17 @@ matcher = OpponentPokemonSentMatcher()
 class OpponentPokemonSentMatcherTest(TestCase):
 
     def test_matches(self):
-        matches, line_consumed, event = matcher.matches("グリーンは\nザシアンを くりだした!", Locale.JA)
+        matches, event = matcher.matches("グリーンは\nザシアンを くりだした!", Locale.JA)
         self.assertTrue(matches)
-        self.assertEqual(line_consumed, 2)
         self.assertEqual("ザシアン", event.pokemon)
         self.assertEqual("グリーンは\nザシアンを くりだした!", event.message)
 
     def test_other_message_does_not_match(self):
-        matches, line_consumed, event = matcher.matches("ウオノラゴンは\nゴツゴツメットで ダメージを受けた!", Locale.JA)
+        matches, event = matcher.matches("ウオノラゴンは\nゴツゴツメットで ダメージを受けた!", Locale.JA)
         self.assertFalse(matches)
 
     def test_works_with_titled_pokemon(self):
-        matches, line_consumed, event = matcher.matches("グリーンは\nランクマスター ザシアンを くりだした!", Locale.JA)
+        matches, event = matcher.matches("グリーンは\nランクマスター ザシアンを くりだした!", Locale.JA)
         self.assertTrue(matches)
-        self.assertEqual(line_consumed, 2)
         self.assertEqual("ザシアン", event.pokemon)
         self.assertEqual("グリーンは\nランクマスター ザシアンを くりだした!", event.message)

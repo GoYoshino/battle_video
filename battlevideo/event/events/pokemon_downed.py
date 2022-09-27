@@ -17,13 +17,13 @@ class PokemonDownedEvent(Event):
 
 class PokemonDownedMatcher(EventMatcher):
 
-    def matches(self, text: str, locale: Locale) -> Tuple[bool, Union[int, None], Union[PokemonDownedEvent, None]]:
+    def matches(self, text: str, locale: Locale) -> Tuple[bool, Union[PokemonDownedEvent, None]]:
         match = re.search("(.+)は\sたおれた!", text)
         if match is not None:
             event = self.__construct_event(match, text)
-            return True, 1, event
+            return True, event
 
-        return False, None, None
+        return False, None
 
     def __construct_event(self, match: re.Match, message: str) -> PokemonDownedEvent:
         pokemon, is_opponent = split_subject(match.group(1))

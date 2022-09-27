@@ -15,13 +15,13 @@ class OpponentPokemonSentEvent(Event):
 
 class OpponentPokemonSentMatcher(EventMatcher):
 
-    def matches(self, text: str, locale: Locale) -> Tuple[bool, Union[int, None], Union[OpponentPokemonSentEvent, None]]:
+    def matches(self, text: str, locale: Locale) -> Tuple[bool, Union[OpponentPokemonSentEvent, None]]:
         match = re.search(".+は\n(.+)を くりだした!$", text)
         if match is not None:
             pokemon = self.__get_pokemon_name(match.group(1))
-            return True, 2, OpponentPokemonSentEvent(text, pokemon)
+            return True, OpponentPokemonSentEvent(text, pokemon)
 
-        return False, None, None
+        return False, None
 
     def __get_pokemon_name(self, string: str):
         parts = string.split(" ")
