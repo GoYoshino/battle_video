@@ -26,3 +26,9 @@ class BoundingBox:
         coverage = intersection_area / (self.get_area())
         assert coverage >= 0.0
         return coverage
+
+    def y_transposed(self, amount: float):
+        return BoundingBox(self.left, self.top + amount, self.right, self.bottom + amount)
+
+    def __repr__(self):
+        return f"[{self.left}, {self.top}, {self.right}, {self.bottom}]"

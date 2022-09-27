@@ -61,7 +61,7 @@ class ImageChunkTest(TestCase):
 
     # 実際のユースケースに近い
     def test_y_is_barely_intersecting(self):
-        contained = BoundingBox(0.0, 80.0, 50.0, 180.0)
-        container = BoundingBox(0.0, 0.0, 100.0, 100.0)
+        contained = BoundingBox(6.0, 48.0, 427.0, 97.0)
+        container = BoundingBox(0.0, 49.0, 1070.0, 98.0)
 
-        self.assertAlmostEqual(contained.get_intersection_coverage(container), 0.2)
+        self.assertAlmostEqual(contained.get_intersection_coverage(container), 0.9795918367346939)
