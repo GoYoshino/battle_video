@@ -2,10 +2,11 @@ import traceback
 from collections import OrderedDict
 from typing import List, Dict
 
-from ocr.bounding_box import BoundingBox
 from ocr.azure_read_result import AzureReadResult
 
 # いったん定数
+from ocr.bounding_interval import BoundingInterval
+
 THRESHOLD = 0.65
 AZURE_Y_LIMIT = 10000
 
@@ -37,9 +38,9 @@ class SegmentedTextContainer:
 
         return output_dict
 
-def __find_block_index(bounding_box: BoundingBox, block_width: int, block_height: int, threshold: float, padding_height: int) -> int:
+def __find_block_index(bounding_interval: BoundingInterval, block_width: int, block_height: int, threshold: float, padding_height: int) -> int:
     section_height = float(block_height) + float(padding_height)
-    estimated_block_index_lower_bound = max(0, int(bounding_box.top / section_height) - 1)
+    estimated_block_index_lower_bound = max(0, int(bounding_interval.high / section_height) - 1)
 
     boxes = []
     loops = int(AZURE_Y_LIMIT / section_height) + 1
@@ -47,9 +48,9 @@ def __find_block_index(bounding_box: BoundingBox, block_width: int, block_height
     highest_index = -1
     bbox_at_highest = None
     for block_index in range(estimated_block_index_lower_bound, loops):
-        image_area = BoundingBox(0, block_index * section_height, block_width, (block_index + 1) * section_height)
+        image_area = BoundingInterval(block_index * section_height, (block_index + 1) * section_height)
         boxes.append(image_area)
-        score = bounding_box.get_intersection_coverage(image_area)
+        score = bounding_interval.get_coverage(image_area)
         if highest_score < score:
             highest_score = score
             bbox_at_highest = image_area
@@ -59,26 +60,22 @@ def __find_block_index(bounding_box: BoundingBox, block_width: int, block_height
     if highest_index != -1:
         return highest_index
 
-    image_region_all = BoundingBox(0, estimated_block_index_lower_bound * block_height, block_width, AZURE_Y_LIMIT)
-    raise Exception(f"image indexを見つけられませんでした: highest_score={highest_score}, bbox={bbox_at_highest}, bbox={bounding_box}, image_size=({block_width}, {block_height}), highest_score={highest_score}")
+    raise Exception(f"image indexを見つけられませんでした: highest_score={highest_score}, bbox={bbox_at_highest}, bbox={bounding_interval}, image_size=({block_width}, {block_height}), highest_score={highest_score}")
 
-def __find_line_index(bounding_box: BoundingBox, block_width: int, block_height: int, threshold: float, padding_height: int) -> int:
+def __find_line_index(bounding_box: BoundingInterval, block_width: int, block_height: int, threshold: float, padding_height: int) -> int:
     half_of_padding_height = float(padding_height / 2.0)
     line_bounding_boxes = [
-        BoundingBox(0.0,
-                    half_of_padding_height,
-                    float(block_width),
+        BoundingInterval(half_of_padding_height,
                     half_of_padding_height + float(block_height / 2.0)),
-        BoundingBox(0.0,
+        BoundingInterval(
                     half_of_padding_height + float(block_height / 2.0),
-                    float(block_width),
                     float(block_height + padding_height))
     ]
     highest_score = -1
     bbox_at_highest = None
     highest_index = -1
     for line_index in range(len(line_bounding_boxes)):
-        score = bounding_box.get_intersection_coverage(line_bounding_boxes[line_index])
+        score = bounding_box.get_coverage(line_bounding_boxes[line_index])
         if score > highest_score:
             highest_score = score
             bbox_at_highest = line_bounding_boxes[line_index]
@@ -95,11 +92,11 @@ def segment_texts(ocr_results: List[AzureReadResult], block_width: int, block_he
     section_height = float(block_height + padding_height)
 
     for ocr_result in ocr_results:
-        block_index = __find_block_index(ocr_result.bounding_box, block_width, block_height, THRESHOLD,
+        block_index = __find_block_index(ocr_result.y_bounding_interval, block_width, block_height, THRESHOLD,
                                          padding_height)
 
-        relative_bounding_box = ocr_result.bounding_box.y_transposed(-block_index * section_height)
-        line_index = __find_line_index(relative_bounding_box, block_width, block_height, THRESHOLD, padding_height)
+        relative_bounding_interval = ocr_result.y_bounding_interval.transposed(-block_index * section_height)
+        line_index = __find_line_index(relative_bounding_interval, block_width, block_height, THRESHOLD, padding_height)
         container.append(block_index, line_index, ocr_result.text)
         #print(f"{ocr_result.text} is imidx={block_index}, lidx={line_index}")
 

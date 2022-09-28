@@ -12,7 +12,7 @@ class BoundingBox:
     def get_area(self) -> float:
         return (self.right - self.left) * (self.bottom - self.top)
 
-    def get_intersection_coverage(self, container) -> float:
+    def get_coverage(self, container) -> float:
         left = max(self.left, container.left)
         top = max(self.top, container.top)
         right = min(self.right, container.right)
