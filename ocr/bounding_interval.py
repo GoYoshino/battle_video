@@ -36,4 +36,4 @@ class BoundingInterval(IBoundingInterval):
         return BoundingInterval(self.low + amount, self.high + amount)
 
     def __repr__(self):
-        return f"[{self.low}, {self.high}"
+        return f"[{self.low}, {self.high}]"
