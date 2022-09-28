@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 import numpy
 
@@ -8,8 +8,8 @@ class MockImageBuilder:
     def __init__(self):
         self.row = []
 
-    def add(self, number_added: int, pixel: List[int]):
-        assert len(pixel) == 3
+    def add(self, number_added: int, pixel: Union[int, List[int]]):
+        assert isinstance(pixel, int) or len(pixel) == 3
         for i in range(number_added):
             self.row.append(pixel)
 

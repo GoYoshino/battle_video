@@ -9,6 +9,9 @@ from ocr.preprocess.swsh.swsh_message_window_filter import SwShMessageWindowFilt
 COLOR_SCORE_THRESHOLD = 0.9
 COLOR_TOLERANCE = 8
 
+TWOBIT_FILTER_LOWER_BOUND = 0.8
+TWOBIT_FILTER_HIGHER_BOUND = 0.999
+
 class SwShMessageWindowPreprocessor:
     """
     剣盾のウィンドウ部分専用のプリプロセッサ
@@ -26,7 +29,7 @@ class SwShMessageWindowPreprocessor:
         """
         frames = self.__window_filter.filter_by_color(frames, COLOR_TOLERANCE, COLOR_SCORE_THRESHOLD)
         frames = self.__thresh(frames)
-        frames = self.__after_thresh_filter(frames)
+        frames = self.__window_filter.filter_threshed_by_black_percentage(frames, TWOBIT_FILTER_LOWER_BOUND, TWOBIT_FILTER_HIGHER_BOUND)
 
         assert len(frames.keys()) > 0
         # TODO: 将来的にここで重複を除く→重複はあえて冗長性のために残すという可能性もある
@@ -53,11 +56,3 @@ class SwShMessageWindowPreprocessor:
             result[index] = im_threshed
         return result
 
-    def __after_thresh_filter(self, frames: Dict[int, numpy.ndarray]) -> Dict[int, numpy.ndarray]:
-        result: Dict[int, numpy.ndarray] = {}
-        for index, image in frames.items():
-            score = float(numpy.count_nonzero(image == 0)) / float(image.shape[0] * image.shape[1])
-            if score < 0.8 or score > 0.999:
-                continue
-            result[index] = image
-        return result

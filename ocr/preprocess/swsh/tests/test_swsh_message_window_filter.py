@@ -120,3 +120,61 @@ class SwShMessageWindowFilterTest(TestCase):
         self.assertEqual(2, len(result))
         self.assertIs(im_window, result[1])
         self.assertIs(im_text, result[2])
+
+    ### 2値フィルタのテスト ###
+
+    def test_2bit_denies_non_grayscale_image(self):
+        with self.assertRaises(AssertionError):
+            filter.filter_threshed_by_black_percentage({1: numpy.array([[[1, 1, 1]]])}, 0.8, 0.999)
+
+    def test_2bit_denies_invalid_bound(self):
+        with self.assertRaises(AssertionError):
+            filter.filter_threshed_by_black_percentage({1: numpy.array([[1]])}, 0.8, 0.7)
+
+    def test_2bit_accepts_windows(self):
+        b = MockImageBuilder()
+        b.add(10, 0)
+        b.add(1, 255)
+        im = b.to_image()
+
+        result = filter.filter_threshed_by_black_percentage({1: im}, 0.8, 0.999)
+        self.assertEqual(1, len(result))
+
+    def test_2bit_denies_anything_but_windows(self):
+        b = MockImageBuilder()
+        b.add(5, 0)
+        b.add(5, 255)
+        im = b.to_image()
+
+        result = filter.filter_threshed_by_black_percentage({1: im}, 0.8, 0.999)
+        self.assertEqual(0, len(result))
+
+    def test_2bit_higher_thresh_is_effective(self):
+        b = MockImageBuilder()
+        b.add(8, 0)
+        b.add(3, 255)
+        im_accepted = b.to_image()
+
+        b.reset()
+        b.add(8, 0)
+        b.add(1, 255)
+        im_rejected = b.to_image()
+
+        result = filter.filter_threshed_by_black_percentage({1: im_accepted, 2: im_rejected}, 0.0, 0.8)
+        self.assertEqual(1, len(result))
+        self.assertIs(result[1], im_accepted)
+
+    def test_2bit_lower_thersh_is_effective(self):
+        b = MockImageBuilder()
+        b.add(8, 0)
+        b.add(3, 255)
+        im_rejected = b.to_image()
+
+        b.reset()
+        b.add(8, 0)
+        b.add(1, 255)
+        im_accepted = b.to_image()
+
+        result = filter.filter_threshed_by_black_percentage({1: im_rejected, 2: im_accepted}, 0.8, 1.0)
+        self.assertEqual(1, len(result))
+        self.assertIs(result[2], im_accepted)
