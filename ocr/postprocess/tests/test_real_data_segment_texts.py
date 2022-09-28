@@ -1,7 +1,10 @@
+import logging
 import pickle
 from unittest import TestCase
 
 from ocr.postprocess import segment_texts
+
+logging.basicConfig(level=logging.DEBUG)
 
 EXPECTED = [
     ['パーソンは\nカバルドンを くりだした', 'パーソンは\nカバルドンを くりだした!', 'パーソンは\nカバルドンを くりだした!', 'パーソンは\nカバルドンを くりだした!',
@@ -28,5 +31,5 @@ class SegmentTextsRealDataTest(TestCase):
             data = pickle.load(f)
 
         for i, item in enumerate(data["result"]):
-            result = segment_texts(item, 1070, 98, 48)
+            result = segment_texts(item, 98, 24)
             self.assertSequenceEqual(EXPECTED[i], result)
