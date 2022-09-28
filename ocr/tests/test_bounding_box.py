@@ -3,7 +3,7 @@ from unittest import TestCase
 from ocr.bounding_box import BoundingBox
 
 
-class ImageChunkTest(TestCase):
+class BoundingBoxTest(TestCase):
 
     def refuses_zero_boundingbox(self):
         with self.assertRaises(AssertionError):
