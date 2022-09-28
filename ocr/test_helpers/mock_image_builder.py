@@ -18,3 +18,6 @@ class MockImageBuilder:
 
     def to_image(self) -> numpy.ndarray:
         return numpy.array([self.row])
+
+    def reset(self):
+        self.row = []

@@ -6,6 +6,8 @@ import numpy
 from ocr.image_chunk import ImageChunk
 from ocr.preprocess.swsh.swsh_message_window_filter import SwShMessageWindowFilter
 
+COLOR_SCORE_THRESHOLD = 0.9
+COLOR_TOLERANCE = 8
 
 class SwShMessageWindowPreprocessor:
     """
@@ -22,7 +24,7 @@ class SwShMessageWindowPreprocessor:
         :param frames: フレーム画像の集合。辞書形式でkeyがフレーム数
         :return: [0]=処理後の画像チャンク(API送信用) [1]=プリプロセスの結果残ったフレーム数のリスト
         """
-        frames = self.__window_filter.filter(frames)
+        frames = self.__window_filter.filter_by_color(frames, COLOR_TOLERANCE, COLOR_SCORE_THRESHOLD)
         frames = self.__thresh(frames)
         frames = self.__after_thresh_filter(frames)
 
