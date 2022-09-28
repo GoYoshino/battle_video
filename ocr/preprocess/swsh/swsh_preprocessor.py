@@ -7,18 +7,27 @@ from ocr.image_chunk import ImageChunk
 from ocr.preprocess.swsh.swsh_message_window_filter import SwShMessageWindowFilter
 
 
-class SwShPreprocessor:
+class SwShMessageWindowPreprocessor:
+    """
+    剣盾のウィンドウ部分専用のプリプロセッサ
+    ウィンドウ部分の画像からいらないものを除いたり、OCRにかけやすい状態にする
+    """
 
     def __init__(self):
         self.__window_filter = SwShMessageWindowFilter()
 
     def preprocess(self, frames: Dict[int, numpy.ndarray]) -> Tuple[List[ImageChunk], List[int]]:
+        """
+        与えられた画像からウィンドウと思われる画像のみを抽出し、OCRにかけやすいよう2値化した状態で返す
+        :param frames: フレーム画像の集合。辞書形式でkeyがフレーム数
+        :return: [0]=処理後の画像チャンク(API送信用) [1]=プリプロセスの結果残ったフレーム数のリスト
+        """
         frames = self.__window_filter.filter(frames)
         frames = self.__thresh(frames)
         frames = self.__after_thresh_filter(frames)
 
         assert len(frames.keys()) > 0
-        # TODO: 将来的にここで重複を除く
+        # TODO: 将来的にここで重複を除く→重複はあえて冗長性のために残すという可能性もある
         chunks = []
         chunk = ImageChunk()
         padding = numpy.zeros((24, list(frames.values())[0].shape[1]), dtype="uint8")

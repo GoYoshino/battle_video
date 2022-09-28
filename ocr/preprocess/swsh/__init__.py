@@ -1,3 +1,3 @@
-from .swsh_preprocessor import SwShPreprocessor
+from .swsh_preprocessor import SwShMessageWindowPreprocessor
 
-__all__ = [ SwShPreprocessor ]
+__all__ = [SwShMessageWindowPreprocessor]
