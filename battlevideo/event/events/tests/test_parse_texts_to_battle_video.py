@@ -2,15 +2,18 @@ from unittest import TestCase
 
 from battlevideo import parse_texts_to_battle_video
 from battlevideo.event.events import OpponentPokemonSentEvent
+from pokedex.pokedex import Pokedex
+
+pokedex = Pokedex()
 
 
 class ParseTextsToBattleVideoTest(TestCase):
 
     def test_accepts_kuridasi_text(self):
         texts = ["レッドは\nピカチュウを くりだした!", "通信待機中..."]
-        video = parse_texts_to_battle_video(texts)
+        video = parse_texts_to_battle_video(texts, pokedex)
 
-        sent_event: OpponentPokemonSentEvent = video[0]
+        sent_event: OpponentPokemonSentEvent = video[0].event
         self.assertEqual("レッドは\nピカチュウを くりだした!", sent_event.message)
         self.assertIsInstance(sent_event, OpponentPokemonSentEvent)
         self.assertEqual("ピカチュウ", sent_event.pokemon)
@@ -27,9 +30,9 @@ class ParseTextsToBattleVideoTest(TestCase):
             "通信待機中...",
             "レッドは\nピカチュウを くりだした!"
         ]
-        video = parse_texts_to_battle_video(texts)
+        video = parse_texts_to_battle_video(texts, pokedex)
 
         self.assertEqual(len(video), 3)
-        self.assertEqual(video[0].message, "レッドは\nピカチュウを くりだした!")
-        self.assertEqual(video[1].message, "ゆけっ! ザシアン!")
-        self.assertEqual(video[2].message, "レッドは\nピカチュウを くりだした!")
+        self.assertEqual(video[0].event.message, "レッドは\nピカチュウを くりだした!")
+        self.assertEqual(video[1].event.message, "ゆけっ! ザシアン!")
+        self.assertEqual(video[2].event.message, "レッドは\nピカチュウを くりだした!")

@@ -6,14 +6,14 @@ from .events import Event, EventMatcher, AllyPokemonSentMatcher, OpponentPokemon
 
 def text_to_event(text: str, pokedex: Pokedex) -> Union[Event, None]:
     matchers: List[EventMatcher] = [
-        AllyPokemonSentMatcher(),
-        OpponentPokemonSentMatcher(),
+        AllyPokemonSentMatcher(pokedex),
+        OpponentPokemonSentMatcher(pokedex),
         MoveUsedMatcher(pokedex),
-        PokemonDownedMatcher()
+        PokemonDownedMatcher(pokedex)
     ]
 
     for matcher in matchers:
-        matches, event = matcher.matches(text, Locale.JA, pokedex)
+        matches, event = matcher.matches(text, Locale.JA)
         if matches:
             return event
 

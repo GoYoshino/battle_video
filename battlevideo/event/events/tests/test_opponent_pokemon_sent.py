@@ -2,8 +2,9 @@ from unittest import TestCase
 
 from battlevideo.event.events.opponent_pokemon_sent import OpponentPokemonSentMatcher
 from battlevideo.event.locale import Locale
+from pokedex.pokedex import Pokedex
 
-matcher = OpponentPokemonSentMatcher()
+matcher = OpponentPokemonSentMatcher(Pokedex())
 
 
 class OpponentPokemonSentMatcherTest(TestCase):
@@ -23,9 +24,9 @@ class OpponentPokemonSentMatcherTest(TestCase):
         self.assertTrue(matches)
 
     def test_revises_pokemon_name(self):
-        matches, event = matcher.matches("グリーンは\nウソッキーを くりだした!", Locale.JA)
+        matches, event = matcher.matches("グリーンは\nウソツキーを くりだした!", Locale.JA)
         self.assertTrue(matches)
-        self.assertEqual("ウソツキー", event.pokemon)
+        self.assertEqual("ウソッキー", event.pokemon)
 
     def test_does_not_normalize_opponent_name(self):
         matches, event = matcher.matches("おちゃは\nザシアンを くりだした!", Locale.JA)
