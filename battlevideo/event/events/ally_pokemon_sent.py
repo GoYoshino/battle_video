@@ -4,6 +4,7 @@ from typing import Tuple, List, Union, Match
 from battlevideo.event.events.event import Event
 from battlevideo.event.events.event_matcher import EventMatcher
 from battlevideo.event.events.normalized_match import normalized_search
+from battlevideo.event.events.utils import remove_title
 from battlevideo.event.locale import Locale
 from pokedex.pokedex import Pokedex
 
@@ -63,10 +64,3 @@ class AllyPokemonSentMatcher(EventMatcher):
         elif message_type == AllyPokemonSentMessageType.TAKE_YOUR_CHANCE:
             return f"相手が 弱っている!\nチャンスだ! {pokemon}!"
         raise NotImplementedError()
-
-def remove_title(pokemon_text: str) -> str:
-    if " " not in pokemon_text:
-        return pokemon_text
-
-    # 称号は捨てる　かなしいね・・
-    return pokemon_text.split(" ")[1]
