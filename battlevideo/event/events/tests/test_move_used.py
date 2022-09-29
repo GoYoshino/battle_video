@@ -53,12 +53,12 @@ class MoveUsedTest(TestCase):
         self.assertTrue(event.is_opponent)
         self.assertTrue("はたきおとす", event.move)
 
-    def test_does_normalized_match_for_small_chars(self):
+    def test_does_normalized_match_for_pokemon_name(self):
         text = "相手の モジャンボは\nはたきおとすを つかつた!"
         matches, event = matcher.matches(text, Locale.JA)
         self.assertTrue(matches)
 
-    def test_normalized_text_are_revised_for_small_chars(self):
+    def test_normalized_text_are_revised_for_pokemon_name(self):
         text = "相手の モジャンボは\nはたきおとすを つかつた!"
         matches, event = matcher.matches(text, Locale.JA)
         self.assertTrue(matches)
@@ -85,3 +85,14 @@ class MoveUsedTest(TestCase):
         matches, event = matcher.matches(text, Locale.JA)
         self.assertTrue(matches)
         self.assertEqual("相手の モジャンボは\nはたきおとすを つかった!", event.message)
+
+    def test_does_normalized_match_for_move_name(self):
+        text = "相手の モジャンボの\nシヤドーボール!"
+        matches, event = matcher.matches(text, Locale.JA)
+        self.assertTrue(matches)
+
+    def test_revises_text_for_move_name(self):
+        text = "相手の モジャンボの\nシヤドーボール!"
+        matches, event = matcher.matches(text, Locale.JA)
+        self.assertTrue(matches)
+        self.assertEqual("相手の モジャンボの\nシャドーボール!", event.message)

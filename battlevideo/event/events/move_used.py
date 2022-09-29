@@ -45,7 +45,8 @@ class MoveUsedMatcher(EventMatcher):
     def __construct_event(self, match: Match, message_type: MoveUsedMessageType) -> MoveUsedEvent:
         pokemon, is_opponent = split_subject(match.group(1))
         pokemon = self.__pokedex.pokemons_reverse[pokemon]
-        move = match.group(2)
+        # TODO: 逆引き辞書にヒットしなかったパターンの処理を考える
+        move = self.__pokedex.moves_reverse[match.group(2)]
         message = self.__construct_message(message_type, is_opponent, pokemon, move)
 
         return MoveUsedEvent(message, pokemon, is_opponent, move)

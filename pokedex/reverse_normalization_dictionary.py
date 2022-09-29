@@ -13,6 +13,7 @@ def create_reverse_normalization_dictionary(words: List[str]) -> Dict[str, str]:
     result: Dict[str, str] = {}
     for word in words:
         normalized = normalize(word)
-        assert normalized not in result.keys()
+        if normalized in result.keys():
+            assert result[normalized] == word, f"正規化後の名前が重複している別の技があるようです: {word}, {result[normalized]}"
         result[normalized] = word
     return result
